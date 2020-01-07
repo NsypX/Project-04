@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "SocketSendRecvTools.h"
 #include <stdio.h>
-#include <string.h>B
+#include <string.h>
 #pragma endregion
 
 #pragma region SendFuncs

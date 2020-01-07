@@ -222,7 +222,7 @@ Last updated by Amnon Drory, Winter 2011.
 		char SendStr[SEND_STR_SIZE];
 
 		BOOL Done = FALSE;
-		TransferResult_t SendRes;
+
 		TransferResult_t RecvRes;
 		SOCKET *t_socket = soc->sd;
 		int result = NO_ERROR1;

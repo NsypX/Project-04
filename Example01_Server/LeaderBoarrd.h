@@ -22,7 +22,6 @@ typedef struct LeaderList
 #define LEADER_FILE_LOC ".\\LeaderBoard.csv"
 #define FILE_READ_MODE "r"
 #define SEPERATE_CHAR ","
-#define MALLOC_ERROR -100
 #define FILE_READ_ERROR -200
 #define NO_ERROR1 -300
 #define MAX_NAME 20
@@ -30,7 +29,6 @@ typedef struct LeaderList
 #define FALSE_VAL 0
 #define TRUE_VAL 1
 #define INF_VAL -1
-#define BUFFER 20
 #define TEMPLATE "%s,%d,%d,%.3f\n"
 #define FILE_HEADER "Name,Won,Lost,Ratio(W/L)\n"
 #define LINE_SIZE 30
@@ -45,7 +43,7 @@ LeaderList * readNextLine(char * currLine, LeaderList * rl, int * result);
 
 LeaderList *getNewLeaderLine(int* result);
 
-LeaderList * addLineToList(char * name, float win, float lost, float ratio, LeaderList *lb, int * result);
+LeaderList * addLineToList(char * name, int win, int lost, float ratio, LeaderList *lb, int * result);
 
 void freeLeader(LeaderList *currRoom);
 
@@ -55,15 +53,17 @@ char* getFullFileFormat(LeaderList * lb);
 
 void freeLeaderInstanse(void);
 
-void  getLeaderInstanse(void);
+LeaderList *  getLeaderInstanse(void);
 
-void addToLeaderInstanse(char * name, float win, float lost);
+void addToLeaderInstanse(char * name, int win, int lost);
 
 char * getLeaderInstanseFileFormat();
 
 LeaderList * removefromList(LeaderList * lb, char* name);
 
 int getIsUpdated();
+
+int writeToFile(char* finalFileInput);
 
 
 #endif /* LeaderBoarrd_h */

@@ -19,6 +19,9 @@
     <Filter Include="Shared Header Files">
       <UniqueIdentifier>{c736a80a-7dab-47c8-8f97-de587a67f551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{85a7e1e1-45da-4013-8152-9613a144729a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="server_main.c">

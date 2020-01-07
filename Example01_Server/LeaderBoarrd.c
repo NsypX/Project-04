@@ -8,6 +8,7 @@
 
 #pragma region Includes
 #include "LeaderBoarrd.h"
+#include "MessegeHead.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -24,7 +25,7 @@ int isUpdated = FALSE_VAL;
 /*
 	Create the instantse.
 */
-void  getLeaderInstanse(void)
+LeaderList *  getLeaderInstanse(void)
 {
 	//TODO: check this statment later...
 	if ((currList == NULL) || (isUpdated == FALSE_VAL))
@@ -64,7 +65,7 @@ int getIsUpdated()
 					lost- the amount of lost to add..
 	 Returns-		nothing.
 */
-void addToLeaderInstanse(char * name, float win, float lost)
+void addToLeaderInstanse(char * name, int win, int lost)
 {
 	int* result = -1;
 	isUpdated = TRUE_VAL;
@@ -150,9 +151,9 @@ LeaderList * readNextLine(char * currLine, LeaderList * lb, int * result)
 	else
 	{
 		name = strtok(name, SEPERATE_CHAR);
-		float win = atoi(strtok(NULL, SEPERATE_CHAR));
-		float lost = atoi(strtok(NULL, SEPERATE_CHAR));
-		float ratio = win;
+		int win = atoi(strtok(NULL, SEPERATE_CHAR));
+		int lost = atoi(strtok(NULL, SEPERATE_CHAR));
+		float ratio = (float)win;
 
 		if (lost != 0)
 		{
@@ -177,7 +178,7 @@ LeaderList * readNextLine(char * currLine, LeaderList * lb, int * result)
 				result - error handler.
    Returns-     Room list, NULL if error.
 */
-LeaderList * addLineToList(char * name, float win, float lost, float ratio, LeaderList *lb, int * result)
+LeaderList * addLineToList(char * name, int win, int lost, float ratio, LeaderList *lb, int * result)
 {
 	// Creating the new line to add.
 	LeaderList * lineToAdd = getNewLeaderLine(result);
@@ -186,7 +187,7 @@ LeaderList * addLineToList(char * name, float win, float lost, float ratio, Lead
 	{
 		if (lost == 0)
 		{
-			ratio = win;
+			ratio = (float)win;
 		}
 		else
 		{
@@ -209,7 +210,7 @@ LeaderList * addLineToList(char * name, float win, float lost, float ratio, Lead
 	}
 	else
 	{
-		lineToAdd->ratio = win;
+		lineToAdd->ratio = (float)win;
 	}
 
 	lineToAdd->next = NULL;
@@ -240,7 +241,7 @@ LeaderList * addLineToList(char * name, float win, float lost, float ratio, Lead
 				}
 				else
 				{
-					lineToAdd->ratio = win;
+					lineToAdd->ratio = (float)win;
 				}
 
 				// Removing from list to add in order.
