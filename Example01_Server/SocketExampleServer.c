@@ -13,6 +13,7 @@ Last updated by Amnon Drory, Winter 2011.
 	#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 	#include "SocketExampleServer.h"
+	#include "ServerHadnler.h"
 
 #pragma endregion
 
@@ -46,6 +47,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 	void MainServer(char* ip)
 	{
+		cleanNamesList();
 		strcpy(IP_ADRESS, ip);
 		int Ind;
 		int Loop;
@@ -56,7 +58,6 @@ Last updated by Amnon Drory, Winter 2011.
 		int ListenRes;
 
 		gameSessionMutex = CreateMutex(NULL, FALSE, NULL);
-		waitForPlayerMutex = CreateMutex(NULL, TRUE, NULL);
 		gameHandlerSemaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
 		
 		if (gameSessionMutex == NULL)
@@ -64,16 +65,10 @@ Last updated by Amnon Drory, Winter 2011.
 			goto server_defaul_clean;
 		}
 
-		if (waitForPlayerMutex == NULL)
-		{
-			CloseHandle(gameSessionMutex);
-			goto server_defaul_clean;
-		}
 
 		if (gameHandlerSemaphore == NULL)
 		{
 			CloseHandle(gameSessionMutex);
-			CloseHandle(waitForPlayerMutex);
 			goto server_defaul_clean;
 		}
 
@@ -259,7 +254,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 	int waitOtherPlayerMove(void)
 	{
-		int time = WaitForMultipleObjects(CLIENT_AMOUNT, gameHandlerSemaphore, TRUE, WAIT_FOR_CLIENT_TIME);
+		int time = WaitForMultipleObjects(CLIENT_AMOUNT, ThreadHandles, TRUE, WAIT_FOR_CLIENT_TIME);
 		return(time);
 	}
 

@@ -32,6 +32,7 @@ typedef struct SockParams
 #define INVALID_MOVE_TXT "INVALID"
 #define GAME_MOVE_INVALID 4
 #define GAME_MOVE_VALID 5
+#define NUM_OF_AVILABLE_NAMES 5
 #define ROCK_OP 0
 #define PAPER_OP 1
 #define SCISOR_OP 2

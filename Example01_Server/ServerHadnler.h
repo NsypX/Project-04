@@ -37,15 +37,13 @@
 #define CVS_TEMPLATE "%s,%d,%d,%.3f\n"
 #define MAX_LINE_CVS 30
 
-void changeName(char* name);
+void changeName(char* name, int loc);
 char* getRandMove(void);
 char* checkWin(char* movePlayer1,char* movePlayer2);
 int checkValidMove(char* move);
 int random_number(int min_num, int max_num);
 int writeToFile(char* name);
-char* getName(void);
-void freeName(void);
-char* createCVSLine(char* name, int first, int second, float third);
-
+char* getName(int loc);
+void cleanNamesList(void);
 
 #endif /* ServerHadnler_h */

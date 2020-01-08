@@ -502,10 +502,11 @@ int pharseOpponentQuit(char* name)
 	return (CONTINUE_RUN);
 }
 
-int pharseNoOpponent()
+int pharseNoOpponent(SOCKET sd)
 {
 	printf("%s", SERVER_NO_OPPONENT_MSG);
-	//pharseMainMenue();
+
+	return(pharseMainMenue(sd));
 	return(CONTINUE_RUN);
 }
 
@@ -570,7 +571,7 @@ int pharseMessage(char* mssg, SOCKET sd)
 	}
 	else if (strcmp(header, SERVER_NO_OPPONENTS) == 0)
 	{
-		result = pharseNoOpponent();
+		result = pharseNoOpponent(sd);
 	}
 	else if (strcmp(header, SERVER_LEADERBOARD) == 0)
 	{

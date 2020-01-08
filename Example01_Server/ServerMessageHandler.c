@@ -23,6 +23,9 @@
 SockParams* firstPlayer = NULL;
 SockParams* secondPlayer = NULL;
 
+char firstPlayerName[MAX_NAME];
+char secondPlayerName[MAX_NAME];
+
 #pragma endregion
 
 
@@ -203,7 +206,7 @@ int pharseClientRequest(char* name, SockParams * param)
 	int result = NO_ERROR1;
 	if (isLocationAvilableForClient() == TRUE_VAL)
 	{
-		changeName(name);
+		changeName(name,param->loc);
 		result = sendGeneralMesseage(SERVER_APPROVED, *param->sd);
 		result = sendGeneralMesseage(SERVER_MAIN_MENU, *param->sd);
 		increaseCountLogged();
@@ -285,10 +288,15 @@ int pharseClientVS(SockParams * param)
 
 		int waitTime = waitOtherPlayerMove();
 
-		if (waitTime < 15000)
+		if (waitTime == 258)
 		{
 			firstPlayer = param;
-			sendGeneralMesseage(SERVER_INVITE, firstPlayer->sd);
+			sendGeneralMesseage(SERVER_INVITE, *firstPlayer->sd);
+		}
+		else
+		{
+			printf("IM A BITCH SERVER");
+			sendGeneralMesseage(SERVER_NO_OPPONENTS, *param->sd);
 		}
 	}
 	else
@@ -296,7 +304,7 @@ int pharseClientVS(SockParams * param)
 		secondPlayer = param;
 		releaseGameSessionMutex();		
 		releaseOtherPlayerMove();
-		sendGeneralMesseage(SERVER_INVITE, secondPlayer->sd);
+		sendGeneralMesseage(SERVER_INVITE, *secondPlayer->sd);
 		
 	}
 	
@@ -347,9 +355,9 @@ int pharseClientMove(char* move, SockParams * param)
 
 	if (strcmp(won, PLAYER1_WIN) == 0)
 	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, getName(), *param->sd);
+		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, getName(param->loc), *param->sd);
 
-		addToLeaderInstanse(getName(), 1, 0);
+		addToLeaderInstanse(getName(param->loc), 1, 0);
 		addToLeaderInstanse(SERVER_NAME, 0, 1);
 	}
 	else if (strcmp(won, PLAYER2_WIN) == 0)
@@ -357,7 +365,7 @@ int pharseClientMove(char* move, SockParams * param)
 		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, SERVER_NAME, *param->sd);
 
 		addToLeaderInstanse(SERVER_NAME, 1, 0);
-		addToLeaderInstanse(getName(), 0, 1);
+		addToLeaderInstanse(getName(param->loc), 0, 1);
 	}
 	else
 	{

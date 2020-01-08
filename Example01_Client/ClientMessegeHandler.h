@@ -66,6 +66,7 @@ int pharseServerMoveRequest(SOCKET sd);
 int pharseGameOverMenue(SOCKET sd);
 int pharseServerLeader(char* board, SOCKET sd);
 int phraseServerLeaderMenue(SOCKET sd);
+int pharseNoOpponent(SOCKET sd);
 int getOptions(char * mssg, int optAmount);
 char* getName(char * mssg);
 char* getTXT(char * mssg);

@@ -20,7 +20,7 @@
 #pragma endregion
 
 #pragma region Globals
-char helperName[20];
+char nameList[NUM_OF_AVILABLE_NAMES][20];
 #pragma endregion
 
 #pragma region Unused
@@ -31,25 +31,28 @@ char helperName[20];
 
 #pragma region NameHandleFunctions
 
-void freeName(void)
+void cleanNamesList(void)
 {
-	free(helperName);
+	for (int i = 0; i < NUM_OF_AVILABLE_NAMES; i++)
+	{
+		strcpy(nameList[i], "");
+	}
 }
 
-char* getName(void)
+char* getName(int loc)
 {
-	return(helperName);
+	return(nameList[loc]);
 }
 
-void changeName(char* name)
+void changeName(char* name,int loc)
 {
-	if (strcmp(helperName, "") == 0)
+	if (strcmp(nameList[loc], "") == 0)
 	{		
-		strcat(helperName, name);
+		strcat(nameList[loc], name);
 	}
 	else
 	{
-		strcpy(helperName, name);	
+		strcpy(nameList[loc], name);
 	}
 }
 

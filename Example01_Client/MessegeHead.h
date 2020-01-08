@@ -30,7 +30,7 @@
 #define SERVER_LEADERBOARD "SERVER_LEADERBOARD"
 #define SERVER_LEADERBORAD_MENU "SERVER_LEADERBORAD_MENU"
 #define UNSUPPURTED_MESSAGE "this message type is unsuppurted in our system.\n"
-#define SERVER_NO_OPPONENT_MSG "there is no opponent avilable.\n"
+#define SERVER_NO_OPPONENT_MSG "there is no opponent avilable.\n\n"
 #define ROCK "ROCK"
 #define PAPER "PAPER"
 #define SCISSORS "SCISSORS"
