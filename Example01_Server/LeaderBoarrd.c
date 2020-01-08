@@ -48,12 +48,6 @@ void freeLeaderInstanse(void)
 
 int getIsUpdated()
 {
-	if (isUpdated == TRUE_VAL)
-	{
-		isUpdated = FALSE_VAL;
-		return(TRUE_VAL);
-	}
-
 	return(isUpdated);
 }
 

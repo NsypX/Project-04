@@ -314,7 +314,7 @@ int pharseClientRefresh(SockParams * param)
 	}
 	else
 	{
-		return(pharseClientLeader(param, FALSE_VAL));
+		return(pharseClientLeader(param, TRUE_VAL));
 	}
 }
 
