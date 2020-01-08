@@ -25,6 +25,8 @@ Last updated by Amnon Drory, Winter 2011.
 	SOCKET ThreadInputs[NUM_OF_WORKER_THREADS];
 	int countLogedIn = 0;
 	char IP_ADRESS[20];
+	HANDLE mutex;
+	HANDLE semaphore;
 
 #pragma endregion
 
@@ -33,6 +35,12 @@ Last updated by Amnon Drory, Winter 2011.
 	void increaseCountLogged(void)
 	{
 		countLogedIn++;
+	}
+
+	void closeHandles(void)
+	{
+		CloseHandle(mutex);
+		CloseHandle(semaphore);
 	}
 
 	void MainServer(char* ip)
@@ -45,6 +53,20 @@ Last updated by Amnon Drory, Winter 2011.
 		SOCKADDR_IN service;
 		int bindRes;
 		int ListenRes;
+
+		mutex = CreateMutex(NULL, FALSE, NULL); 
+		semaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
+		
+		if (mutex == NULL) 
+		{
+			goto server_defaul_clean;
+		}
+
+		if (semaphore == NULL)
+		{
+			CloseHandle(mutex);
+			goto server_defaul_clean;
+		}
 
 		// creating the list of cvs file.
 		getLeaderInstanse();
@@ -138,15 +160,28 @@ Last updated by Amnon Drory, Winter 2011.
 		}
 
 	server_cleanup_3:
-		CleanupWorkerThreads();
+		{
+			CleanupWorkerThreads();
+			closeHandles();
+		}
 
 	server_cleanup_2:
-		if (closesocket(MainSocket) == SOCKET_ERROR)
-			printf("Failed to close MainSocket, error %ld. Ending program\n", WSAGetLastError());
+		{
+			if (closesocket(MainSocket) == SOCKET_ERROR)
+				printf("Failed to close MainSocket, error %ld. Ending program\n", WSAGetLastError());
+
+			closeHandles();
+		}
 
 	server_cleanup_1:
-		if (WSACleanup() == SOCKET_ERROR)
-			printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError());
+		{
+			closeHandles();
+			if (WSACleanup() == SOCKET_ERROR)
+				printf("Failed to close Winsocket, error %ld. Ending program.\n", WSAGetLastError());
+		}
+
+	server_defaul_clean:
+		printf("Going down.");
 	}
 
 	static int FindFirstUnusedThreadSlot()
@@ -199,6 +234,16 @@ Last updated by Amnon Drory, Winter 2011.
 				}
 			}
 		}
+	}
+
+	int waitMutex(void)
+	{
+		int time = WaitForSingleObject(mutex, INFINITE);
+	}
+
+	int releaseMutex(void)
+	{
+		int time = ReleaseMutex(mutex);
 	}
 
 	int isLocationAvilableForClient()

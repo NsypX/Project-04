@@ -19,8 +19,8 @@
 #include "LeaderBoarrd.h"
 #include "SocketExampleServer.h"
 
+#define CLIENT_AMOUNT 2
 
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 void MainServer(char* ip);
 static int FindFirstUnusedThreadSlot();
@@ -28,9 +28,9 @@ static void CleanupWorkerThreads();
 static DWORD ServiceThread(SockParams *soc);
 int isLocationAvilableForClient();
 void increaseCountLogged(void);
+int waitMutex(void);
+int releaseMutex(void);
 
 
-
-/*oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO*/
 
 #endif // SOCKET_EXAMPLE_SERVER_H
