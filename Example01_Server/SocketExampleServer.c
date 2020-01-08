@@ -24,6 +24,7 @@ Last updated by Amnon Drory, Winter 2011.
 	#define SEND_STR_SIZE 35
 	HANDLE ThreadHandles[NUM_OF_WORKER_THREADS];
 	SOCKET ThreadInputs[NUM_OF_WORKER_THREADS];
+	SockParams params[NUM_OF_WORKER_THREADS];
 	int countLogedIn = 0;
 	char IP_ADRESS[20];
 	HANDLE gameSessionMutex;
@@ -155,11 +156,10 @@ Last updated by Amnon Drory, Winter 2011.
 			}
 			else
 			{				
-				ThreadInputs[Ind] = AcceptSocket;
-				SockParams* params = (SockParams *)calloc(1, sizeof(SockParams *));
-				params->sd = &AcceptSocket;
-				params->loc = Ind;
-				ThreadHandles[Ind] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ServiceThread, params, 0, NULL);
+				ThreadInputs[Ind] = AcceptSocket;				
+				params[Ind].sd = AcceptSocket;
+				params[Ind].loc = Ind;
+				ThreadHandles[Ind] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ServiceThread, &params[Ind], 0, NULL);
 			}
 		}
 
@@ -288,7 +288,7 @@ Last updated by Amnon Drory, Winter 2011.
 		BOOL Done = FALSE;
 
 		TransferResult_t RecvRes;
-		SOCKET *t_socket = soc->sd;
+		SOCKET *t_socket = &soc->sd;
 		int result = NO_ERROR1;
 
 		while (!Done)

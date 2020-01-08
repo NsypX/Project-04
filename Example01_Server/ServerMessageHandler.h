@@ -15,7 +15,7 @@
 
 typedef struct SockParams
 {
-	SOCKET* sd;
+	SOCKET sd;
 	int loc;
 }SockParams;
 

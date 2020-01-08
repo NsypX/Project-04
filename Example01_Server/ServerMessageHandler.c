@@ -42,13 +42,13 @@ int sendGeneralMesseage(char* messageID, SockParams * params)
 	mssg = strcat(mssg, messageID);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, *(params->sd));
+	TransferResult_t SendRes = SendString(mssg, (params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(*params->sd);
+		closesocket(params->sd);
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -70,13 +70,13 @@ int sendServerDenieMessage(char* messageID, char* message, SockParams * params)
 	mssgDenie = strcat(mssgDenie, message);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssgDenie, *(params->sd));
+	TransferResult_t SendRes = SendString(mssgDenie, (params->sd));
 	free(mssgDenie);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(*(params->sd));
+		closesocket((params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -98,14 +98,14 @@ int sendServerInvite(char* messageID, char name[], SockParams * params)
 
 	// send mssg.	
 	printf("%s\n", mssg);
-	TransferResult_t SendRes = SendString(mssg, *(params->sd));
+	TransferResult_t SendRes = SendString(mssg, (params->sd));
 	free(mssg);
 
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(*(params->sd));
+		closesocket((params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -133,13 +133,13 @@ int sendGameResultMessage(char* messageID, char* client, char* moveOp, char* mov
 	mssg = strcat(mssg, won);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, *(params->sd));
+	TransferResult_t SendRes = SendString(mssg, (params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(*(params->sd));
+		closesocket((params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -161,13 +161,13 @@ int sendOponnentQuitMessage(char* messageID, char* otherClient, SockParams * par
 	
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, *(params->sd));
+	TransferResult_t SendRes = SendString(mssg, (params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(*(params->sd));
+		closesocket((params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -188,13 +188,13 @@ int sendLeaderBoardMessage(char* messageID, char* leaderFileContent, SockParams 
 	mssg = strcat(mssg, leaderFileContent);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, *(params->sd));
+	TransferResult_t SendRes = SendString(mssg, (params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(*(params->sd));
+		closesocket((params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -300,7 +300,7 @@ int pharseClientVS(SockParams* param)
 		}
 		else
 		{
-			sendGeneralMesseage(SERVER_NO_OPPONENTS, *param->sd);
+			sendGeneralMesseage(SERVER_NO_OPPONENTS, param->sd);
 		}
 	}
 	else
