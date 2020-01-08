@@ -317,6 +317,9 @@ int phasreServerGameResult(char* client, char* moveOp, char* moveMe, char* won)
 
 int pharseMainMenue(SOCKET sd)
 {
+	// Set no error.
+	int result = NO_ERROR1;
+
 	// Get main menue options.
 	int option = getOptions(SERVER_MENUE_MESSAGE, SERVER_MENUE_OPT_AMOUNT);
 
@@ -326,25 +329,25 @@ int pharseMainMenue(SOCKET sd)
 	case (SERVER_MENUE_OPTION_PLAY_VS_CLIENT):
 	{
 		// Create cliend vs mssg.
-		int result = sendGeneralMesseage(CLIENT_VERSUS, sd);
+		result = sendGeneralMesseage(CLIENT_VERSUS, sd);
 		break;
 	}
 	case (SERVER_MENUE_OPTION_PLAY_VS_SERVER):
 	{
 		// Create client cpu mssg.
-		int result = sendGeneralMesseage(CLIENT_CPU, sd);
+		result = sendGeneralMesseage(CLIENT_CPU, sd);
 		break;
 	}
 	case (SERVER_MENUE_OPTION_VIEW_LEADER):
 	{
 		// Create client leaderboard mssg.
-		int result = sendGeneralMesseage(CLIENT_LEADERBOARD, sd);
+		result = sendGeneralMesseage(CLIENT_LEADERBOARD, sd);
 		break;
 	}
 	case (SERVER_MENUE_OPTION_QUIT):
 	{
 		// Create client disconnect.
-		int result = sendGeneralMesseage(CLIENT_DISCONNECT, sd);
+		result = sendGeneralMesseage(CLIENT_DISCONNECT, sd);
 		return(TRUE_VAL);
 		break;
 	}
