@@ -35,6 +35,8 @@ int releaseGameSessionMutex(void);
 int waitOtherPlayerMove(void);
 int releaseOtherPlayerMove(void);
 int waitOtherPlayerMoveINF(void);
+int waitFileMutex(void);
+int releasFileMutex(void);
 
 
 

@@ -260,6 +260,18 @@ Last updated by Amnon Drory, Winter 2011.
 		return(time);
 	}
 
+	int waitFileMutex(void)
+	{
+		int time = WaitForSingleObject(waitForPlayerMutex, INFINITE);
+		return(time);
+	}
+
+	int releasFileMutex(void)
+	{
+		int time = ReleaseMutex(waitForPlayerMutex);
+		return(time);
+	}
+
 	int waitOtherPlayerMove(void)
 	{
 		int time = WaitForSingleObject(gameHandlerSemaphore, WAIT_FOR_CLIENT_TIME);

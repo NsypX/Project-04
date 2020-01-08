@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "LeaderBoarrd.h"
 #include "MessegeHead.h"
+#include "SocketExampleServer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -32,7 +33,7 @@ long updateTime= TRUE_VAL;
 */
 LeaderList *  getLeaderInstanse(void)
 {
-	//TODO: check this statment later...
+	waitFileMutex();
 	if (currList == NULL)
 	{
 		int result = NO_ERROR1;
@@ -46,7 +47,7 @@ LeaderList *  getLeaderInstanse(void)
 
 		currList = getLeaderBoardFromFile(LEADER_FILE_LOC, currList, &result);
 	}
-
+	releasFileMutex();
 	return (currList);
 }
 
@@ -55,11 +56,14 @@ LeaderList *  getLeaderInstanse(void)
 */
 void freeLeaderInstanse(void)
 {
+	waitFileMutex();
 	freeLeader(currList);
+	releasFileMutex();
 }
 
 int getIsUpdated()
 {
+	waitFileMutex();
 	if (updateTime < (long)time(NULL))
 	{
 		return(FALSE_VAL);
@@ -68,11 +72,15 @@ int getIsUpdated()
 	{
 		return(TRUE_VAL);
 	}
-	
+	releasFileMutex();
 }
+
 void setUpdateTime(void)
 {
+	waitFileMutex();
+
 	updateTime = (long)time(NULL);
+	releasFileMutex();
 }
 
 /*
@@ -85,11 +93,14 @@ void setUpdateTime(void)
 */
 void addToLeaderInstanse(char * name, int win, int lost)
 {
+	waitFileMutex();
+
 	int* result = -1;
 	setUpdateTime();
 	currList = addLineToList(name, win, lost, INF_VAL, currList, result);
 	char* fileToSave = getFullFileFormat(currList);
 	writeToFile(fileToSave);
+	releasFileMutex();
 }
 
 /*
@@ -97,7 +108,9 @@ void addToLeaderInstanse(char * name, int win, int lost)
 */
 char* getLeaderInstanseFileFormat()
 {
+	waitFileMutex();
 	return(getFullFileFormat(currList));
+	releasFileMutex();
 }
 
 #pragma endregion
