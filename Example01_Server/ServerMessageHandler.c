@@ -262,14 +262,23 @@ int pharseClientVS(SockParams * param)
 
 	if (isFileExist(GAME_SESSION_LOC) == FALSE_VAL)
 	{
-
+		FILE * gameSession = fopen(GAME_SESSION_LOC, "w");
+		fclose(gameSession);
+		releaseGameSessionMutex();
+		waitOtherPlayerMove();
 	}
 	else
 	{
+		FILE * gameSession = fopen(GAME_SESSION_LOC, "w");
 
+		fclose(gameSession);		
+		releaseGameSessionMutex();
+		releaseOtherPlayerMove();
 	}
 	
-	releaseGameSessionMutex();
+	
+
+	
 
 	return(NO_ERROR1);
 }

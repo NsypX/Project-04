@@ -30,6 +30,9 @@ int isLocationAvilableForClient();
 void increaseCountLogged(void);
 int waitGameSessionMutex(void);
 int releaseGameSessionMutex(void);
+int waitOtherPlayerMove(void);
+int releaseOtherPlayerMove(void);
+
 
 
 
