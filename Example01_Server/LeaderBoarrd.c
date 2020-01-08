@@ -13,11 +13,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #pragma endregion
 
 #pragma region Globals
 LeaderList * currList = NULL;
-int isUpdated = FALSE_VAL;
+long updateTime= TRUE_VAL;
 #pragma endregion
 
 #pragma region InstanseFunctions
@@ -28,9 +29,8 @@ int isUpdated = FALSE_VAL;
 LeaderList *  getLeaderInstanse(void)
 {
 	//TODO: check this statment later...
-	if ((currList == NULL) || (isUpdated == FALSE_VAL))
+	if (currList == NULL)
 	{
-		isUpdated = TRUE_VAL;
 		int* result = -1;
 		currList = getLeaderBoardFromFile(LEADER_FILE_LOC, currList, result);
 	}
@@ -48,7 +48,19 @@ void freeLeaderInstanse(void)
 
 int getIsUpdated()
 {
-	return(isUpdated);
+	if (updateTime < (long)time(NULL))
+	{
+		return(FALSE_VAL);
+	}
+	else
+	{
+		return(TRUE_VAL);
+	}
+	
+}
+void setUpdateTime(void)
+{
+	updateTime = (long)time(NULL);
 }
 
 /*
@@ -62,7 +74,7 @@ int getIsUpdated()
 void addToLeaderInstanse(char * name, int win, int lost)
 {
 	int* result = -1;
-	isUpdated = TRUE_VAL;
+	setUpdateTime();
 	currList = addLineToList(name, win, lost, INF_VAL, currList, result);
 	char* fileToSave = getFullFileFormat(currList);
 	writeToFile(fileToSave);

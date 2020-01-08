@@ -65,5 +65,7 @@ int getIsUpdated();
 
 int writeToFile(char* finalFileInput);
 
+void setUpdateTime(void);
+
 
 #endif /* LeaderBoarrd_h */

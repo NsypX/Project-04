@@ -307,10 +307,13 @@ int pharseClientReplay(SockParams * param)
 
 int pharseClientRefresh(SockParams * param)
 {
+	// Check update time.
 	int isUpdate = getIsUpdated();
+
 	if (isUpdate == TRUE_VAL)
 	{
 		return(pharseClientLeader(param, FALSE_VAL));
+		setUpdateTime();
 	}
 	else
 	{
