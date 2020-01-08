@@ -67,5 +67,7 @@ int writeToFile(char* finalFileInput);
 
 void setUpdateTime(void);
 
+int LeaderBoardCreation();
+
 
 #endif /* LeaderBoarrd_h */

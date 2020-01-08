@@ -56,7 +56,7 @@ Last updated by Amnon Drory, Winter 2011.
 		int ListenRes;
 
 		gameSessionMutex = CreateMutex(NULL, FALSE, NULL);
-		waitForPlayerMutex = CreateMutex(NULL, FALSE, NULL);
+		waitForPlayerMutex = CreateMutex(NULL, TRUE, NULL);
 		semaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
 		
 		if (gameSessionMutex == NULL)

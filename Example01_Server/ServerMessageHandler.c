@@ -263,17 +263,29 @@ int pharseClientVS(SockParams * param)
 	if (isFileExist(GAME_SESSION_LOC) == FALSE_VAL)
 	{
 		FILE * gameSession = fopen(GAME_SESSION_LOC, "w");
+		if (gameSession == NULL)
+		{
+			releaseGameSessionMutex();
+			return(FILE_ERROR);
+		}
+
 		fclose(gameSession);
 		releaseGameSessionMutex();
-		waitOtherPlayerMove();
+		int waitTime = waitOtherPlayerMove();
+
+		if (waitTime < WAIT_FOR_CLIENT_TIME)
+		{
+			firstPlayer = param;
+			sendGeneralMesseage(SERVER_INVITE, firstPlayer->sd);
+		}
 	}
 	else
 	{
-		FILE * gameSession = fopen(GAME_SESSION_LOC, "w");
-
-		fclose(gameSession);		
-		releaseGameSessionMutex();
+		secondPlayer = param;
+		releaseGameSessionMutex();		
 		releaseOtherPlayerMove();
+		sendGeneralMesseage(SERVER_INVITE, secondPlayer->sd);
+		
 	}
 	
 	

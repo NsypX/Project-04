@@ -24,6 +24,10 @@ long updateTime= TRUE_VAL;
 #pragma region InstanseFunctions
 
 /*
+
+*/
+
+/*
 	Create the instantse.
 */
 LeaderList *  getLeaderInstanse(void)
@@ -31,8 +35,16 @@ LeaderList *  getLeaderInstanse(void)
 	//TODO: check this statment later...
 	if (currList == NULL)
 	{
-		int* result = -1;
-		currList = getLeaderBoardFromFile(LEADER_FILE_LOC, currList, result);
+		int result = NO_ERROR1;
+		
+		result = LeaderBoardCreation();
+
+		if (result != TRUE_VAL)
+		{
+			return(result);
+		}
+
+		currList = getLeaderBoardFromFile(LEADER_FILE_LOC, currList, &result);
 	}
 
 	return (currList);
@@ -436,5 +448,38 @@ int writeToFile(char* finalFileInput)
 	return(NO_ERROR1);
 }
 
+int isLeaderBoardExist()
+{
+
+	/* try to open file to read */
+	FILE *file;
+
+	if (file = fopen(LEADER_FILE_LOC, "r"))
+	{
+		fclose(file);
+		return TRUE_VAL;
+	}
+
+	return FALSE_VAL;
+}
+
+
+int LeaderBoardCreation()
+{
+	if (isLeaderBoardExist() != TRUE_VAL)
+	{
+		FILE* leader = fopen(LEADER_FILE_LOC, "w");
+
+		if (leader == NULL)
+		{
+			return(FILE_READ_ERROR);
+		}
+
+		fputs(FILE_HEADER, leader);
+		fclose(leader);
+	}
+
+	return(TRUE_VAL);
+}
 
 #pragma endregion
