@@ -26,7 +26,6 @@
 
 void clearScrean(char* code);
 void MainClient(char* ip, char* port, char* name);
-int connectToServer(char* template, int isPrintFirst, SOCKET sock);
 int closeClient();
 int setName(char* nameToSet);
 char* getClientName();

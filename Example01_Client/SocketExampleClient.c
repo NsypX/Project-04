@@ -34,6 +34,7 @@ int PORT;
 int setName(char* nameToSet)
 {
 	strcat(ClientName, nameToSet);
+	return (NO_ERROR1);
 }
 
 char* getClientName()
@@ -61,6 +62,7 @@ int closeThread()
 {
 	TerminateThread(hThread, 0x555);
 	CloseHandle(hThread);
+	return(NO_ERROR1);
 }
 
 //Reading data coming from the server
@@ -95,32 +97,6 @@ static DWORD RecvDataThread(void)
 }
 
 
-// Sending data to the server
-static DWORD SendDataThread(void)
-{
-
-	char SendStr[256];
-	TransferResult_t SendRes;
-
-	while (1)
-	{
-		/*
-		gets_s(SendStr, sizeof(SendStr)); //Reading a string from the keyboard
-
-		if ( STRINGS_ARE_EQUAL(SendStr,"quit") )
-			return 0x555; //"quit" signals an exit from the client side
-
-		SendRes = SendString( SendStr, m_socket);
-
-		if ( SendRes == TRNS_FAILED )
-		{
-			printf("Socket error while trying to write data to socket\n");
-			;
-		}
-		*/
-	}
-
-}
 #pragma endregion
 
 #pragma region NormalFunctions
@@ -217,7 +193,7 @@ void MainClient(char* ip, char* charPort, char* name)
 
 			if (printed == NULL)
 			{
-				return (TRUE_VAL);
+				return;
 			}
 
 			// try connect to server

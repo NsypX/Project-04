@@ -384,7 +384,7 @@ int pharseServerDenie(char* reason, SOCKET sd)
 
 int pharseServerInvite(char* name)
 {
-	printf("%s", name);
+	printf("The other client name is -> %s", name);
 	return (CONTINUE_RUN);
 }
 

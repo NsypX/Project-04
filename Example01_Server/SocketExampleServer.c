@@ -19,7 +19,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 #pragma region Globals
 
-	#define NUM_OF_WORKER_THREADS 5
+	#define NUM_OF_WORKER_THREADS 2
 	#define MAX_LOOPS 3
 	#define SEND_STR_SIZE 35
 	HANDLE ThreadHandles[NUM_OF_WORKER_THREADS];
@@ -254,7 +254,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 	int waitOtherPlayerMove(void)
 	{
-		int time = WaitForMultipleObjects(CLIENT_AMOUNT, ThreadHandles, TRUE, WAIT_FOR_CLIENT_TIME);
+		int time = WaitForSingleObject(gameHandlerSemaphore, WAIT_FOR_CLIENT_TIME);
 		return(time);
 	}
 

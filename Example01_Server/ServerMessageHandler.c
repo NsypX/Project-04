@@ -30,7 +30,7 @@ char secondPlayerName[MAX_NAME];
 
 
 #pragma region SendMessageFunctions
-int sendGeneralMesseage(char* messageID, SOCKET * sd)
+int sendGeneralMesseage(char* messageID, SockParams * params)
 {
 	char* mssg = calloc(1, strlen(messageID) + BUFFER);
 
@@ -42,13 +42,13 @@ int sendGeneralMesseage(char* messageID, SOCKET * sd)
 	mssg = strcat(mssg, messageID);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, sd);
+	TransferResult_t SendRes = SendString(mssg, *(params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(sd);
+		closesocket(*params->sd);
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -56,7 +56,7 @@ int sendGeneralMesseage(char* messageID, SOCKET * sd)
 }
 
 
-int sendServerDenieMessage(char* messageID, char* message, SOCKET * sd)
+int sendServerDenieMessage(char* messageID, char* message, SockParams * params)
 {
 	char* mssgDenie = calloc(1, strlen(messageID) + strlen(message) + BUFFER);
 
@@ -70,20 +70,20 @@ int sendServerDenieMessage(char* messageID, char* message, SOCKET * sd)
 	mssgDenie = strcat(mssgDenie, message);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssgDenie, sd);
+	TransferResult_t SendRes = SendString(mssgDenie, *(params->sd));
 	free(mssgDenie);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(sd);
+		closesocket(*(params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
 	return(NO_ERROR1);
 }
 
-int sendServerInvite(char* messageID, char* name, SOCKET * sd)
+int sendServerInvite(char* messageID, char name[], SockParams * params)
 {
 	char* mssg = calloc(1, strlen(messageID) + strlen(name) + BUFFER);
 
@@ -96,21 +96,23 @@ int sendServerInvite(char* messageID, char* name, SOCKET * sd)
 	mssg = strcat(mssg, PARAMETER_BEGIN_CHAR);
 	mssg = strcat(mssg, name);
 
-	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, sd);
+	// send mssg.	
+	printf("%s\n", mssg);
+	TransferResult_t SendRes = SendString(mssg, *(params->sd));
 	free(mssg);
+
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(sd);
+		closesocket(*(params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
 	return(NO_ERROR1);
 }
 
-int sendGameResultMessage(char* messageID, char* client, char* moveOp, char* moveMe, char* won, SOCKET * sd)
+int sendGameResultMessage(char* messageID, char* client, char* moveOp, char* moveMe, char* won, SockParams * params)
 {
 	char* mssg = calloc(1, strlen(messageID) + strlen(client) + strlen(moveOp)
 		+ strlen(moveMe) + strlen(won) + BUFFER);
@@ -131,20 +133,20 @@ int sendGameResultMessage(char* messageID, char* client, char* moveOp, char* mov
 	mssg = strcat(mssg, won);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, sd);
+	TransferResult_t SendRes = SendString(mssg, *(params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(sd);
+		closesocket(*(params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
 	return(NO_ERROR1);
 }
 
-int sendOponnentQuitMessage(char* messageID, char* otherClient, SOCKET * sd)
+int sendOponnentQuitMessage(char* messageID, char* otherClient, SockParams * params)
 {
 	char* mssg = calloc(1, strlen(messageID) + strlen(otherClient) + BUFFER);
 
@@ -156,22 +158,23 @@ int sendOponnentQuitMessage(char* messageID, char* otherClient, SOCKET * sd)
 	mssg = strcat(mssg, messageID);
 	mssg = strcat(mssg, PARAMETER_BEGIN_CHAR);
 	mssg = strcat(mssg, otherClient);
+	
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, sd);
+	TransferResult_t SendRes = SendString(mssg, *(params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(sd);
+		closesocket(*(params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
 	return(NO_ERROR1);
 }
 
-int sendLeaderBoardMessage(char* messageID, char* leaderFileContent, SOCKET * sd)
+int sendLeaderBoardMessage(char* messageID, char* leaderFileContent, SockParams * params)
 {
 	char* mssg = calloc(1, strlen(messageID) + strlen(leaderFileContent) + BUFFER);
 
@@ -185,13 +188,13 @@ int sendLeaderBoardMessage(char* messageID, char* leaderFileContent, SOCKET * sd
 	mssg = strcat(mssg, leaderFileContent);
 
 	// send mssg.			
-	TransferResult_t SendRes = SendString(mssg, sd);
+	TransferResult_t SendRes = SendString(mssg, *(params->sd));
 	free(mssg);
 
 	if (SendRes == TRNS_FAILED)
 	{
 		printf("Service socket error while writing, closing thread.\n");
-		closesocket(sd);
+		closesocket(*(params->sd));
 		return ERROR_IN_CONNECTION;
 	}
 
@@ -207,13 +210,13 @@ int pharseClientRequest(char* name, SockParams * param)
 	if (isLocationAvilableForClient() == TRUE_VAL)
 	{
 		changeName(name,param->loc);
-		result = sendGeneralMesseage(SERVER_APPROVED, *param->sd);
-		result = sendGeneralMesseage(SERVER_MAIN_MENU, *param->sd);
+		result = sendGeneralMesseage(SERVER_APPROVED, param);
+		result = sendGeneralMesseage(SERVER_MAIN_MENU, param);
 		increaseCountLogged();
 	}
 	else
 	{
-		result = sendServerDenieMessage(SERVER_DENIED, SERVER_DENIED_MESSAGE, *param->sd);
+		result = sendServerDenieMessage(SERVER_DENIED, SERVER_DENIED_MESSAGE, param);
 
 		if (result != NO_ERROR1)
 		{
@@ -230,14 +233,14 @@ int pharseClientRequest(char* name, SockParams * param)
 
 int pharseClientMainMenue(SockParams * param)
 {
-	int result = sendGeneralMesseage(SERVER_MAIN_MENU, *param->sd);
+	int result = sendGeneralMesseage(SERVER_MAIN_MENU, param);
 
 	return (NO_ERROR1);
 }
 
 int pharseClientCPU(SockParams * param)
 {
-	int result = sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST, *param->sd);
+	int result = sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST, param);
 	return(NO_ERROR1);
 }
 
@@ -268,12 +271,13 @@ void debugThread(void)
 		printf("Waiting...");
 	}
 }
-int pharseClientVS(SockParams * param)
+int pharseClientVS(SockParams* param)
 {
 	waitGameSessionMutex();
 
 	if (isFileExist(GAME_SESSION_LOC) == FALSE_VAL)
 	{
+		firstPlayer = param;
 		FILE * gameSession = fopen(GAME_SESSION_LOC, "w");
 		
 		if (gameSession == NULL)
@@ -288,14 +292,14 @@ int pharseClientVS(SockParams * param)
 
 		int waitTime = waitOtherPlayerMove();
 
-		if (waitTime == 258)
-		{
-			firstPlayer = param;
-			sendGeneralMesseage(SERVER_INVITE, *firstPlayer->sd);
+		if (waitTime == 0)
+		{			
+			waitGameSessionMutex();
+			sendServerInvite(SERVER_INVITE, getName(secondPlayer->loc), firstPlayer);
+			releaseGameSessionMutex();
 		}
 		else
 		{
-			printf("IM A BITCH SERVER");
 			sendGeneralMesseage(SERVER_NO_OPPONENTS, *param->sd);
 		}
 	}
@@ -304,10 +308,10 @@ int pharseClientVS(SockParams * param)
 		secondPlayer = param;
 		releaseGameSessionMutex();		
 		releaseOtherPlayerMove();
-		sendGeneralMesseage(SERVER_INVITE, *secondPlayer->sd);
-		
+		waitGameSessionMutex();
+		sendServerInvite(SERVER_INVITE,getName(firstPlayer->loc), secondPlayer);
+		releaseGameSessionMutex();
 	}
-	
 	
 	remove(GAME_SESSION_LOC);
 	
@@ -333,12 +337,12 @@ int pharseClientLeader(SockParams * param, int isUpdate)
 		return (MALLOC_ERROR);
 	}
 
-	int result = sendLeaderBoardMessage(SERVER_LEADERBOARD, leaderFile, *param->sd);
+	int result = sendLeaderBoardMessage(SERVER_LEADERBOARD, leaderFile, param);
 
 	free(leaderFile);
 
 	// Create Leader Menue.
-	result = sendGeneralMesseage(SERVER_LEADERBORAD_MENU, *param->sd);
+	result = sendGeneralMesseage(SERVER_LEADERBORAD_MENU, param);
 
 	return(NO_ERROR1);
 }
@@ -355,32 +359,32 @@ int pharseClientMove(char* move, SockParams * param)
 
 	if (strcmp(won, PLAYER1_WIN) == 0)
 	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, getName(param->loc), *param->sd);
+		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, getName(param->loc), param);
 
 		addToLeaderInstanse(getName(param->loc), 1, 0);
 		addToLeaderInstanse(SERVER_NAME, 0, 1);
 	}
 	else if (strcmp(won, PLAYER2_WIN) == 0)
 	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, SERVER_NAME, *param->sd);
+		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, SERVER_NAME, param);
 
 		addToLeaderInstanse(SERVER_NAME, 1, 0);
 		addToLeaderInstanse(getName(param->loc), 0, 1);
 	}
 	else
 	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, DREW_IN_GAME, *param->sd);
+		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, DREW_IN_GAME, param);
 	}
 
 
-	result = sendGeneralMesseage(SERVER_GAME_OVER_MENU, *param->sd);
+	result = sendGeneralMesseage(SERVER_GAME_OVER_MENU, param);
 
 	return(NO_ERROR1);
 }
 
 int pharseClientReplay(SockParams * param)
 {
-	int result = sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST, *param->sd);
+	int result = sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST, param);
 	return(NO_ERROR1);
 }
 

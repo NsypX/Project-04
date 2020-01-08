@@ -52,22 +52,22 @@ typedef struct SockParams
 #define SERVER_DENIE_CLIENT 124
 #define FILE_ERROR -400
 
-int sendGeneralMesseage(char* messageID, SOCKET * sd);
-int sendServerDenieMessage(char* messageID, char* message, SOCKET * sd);
-int sendServerInvite(char* messageID, char* name, SOCKET * sd);
-int sendGameResultMessage(char* messageID, char* client, char* moveOp, char* moveMe, char* won, SOCKET * sd);
-int sendOponnentQuitMessage(char* messageID, char* otherClient, SOCKET * sd);
-int sendLeaderBoardMessage(char* messageID, char* leaderFileContent, SOCKET * sd);
-int pharseMessage(char* mssg, SockParams *soc);
-int pharseClientRequest(char* name, SockParams *soc);
-int pharseClientMainMenue(SockParams *soc);
-int pharseClientCPU(SockParams *soc);
-int pharseClientVS(SockParams *soc);
-int pharseClientLeader(SockParams *soc,int isUpdate);
-int pharseClientMove(char* move, SockParams *soc);
-int pharseClientReplay(SockParams *soc);
-int pharseClientRefresh(SockParams *soc);
-int pharseClientDisconnect(SockParams *soc);
+int sendGeneralMesseage(char* messageID, SockParams * params);
+int sendServerDenieMessage(char* messageID, char* message, SockParams * params);
+int sendServerInvite(char* messageID, char name[], SockParams * params);
+int sendGameResultMessage(char* messageID, char* client, char* moveOp, char* moveMe, char* won, SockParams * params);
+int sendOponnentQuitMessage(char* messageID, char* otherClient, SockParams * params);
+int sendLeaderBoardMessage(char* messageID, char* leaderFileContent, SockParams * params);
+int pharseMessage(char* mssg, SockParams *param);
+int pharseClientRequest(char* name, SockParams *param);
+int pharseClientMainMenue(SockParams *param);
+int pharseClientCPU(SockParams *param);
+int pharseClientVS(SockParams *param);
+int pharseClientLeader(SockParams *param,int isUpdate);
+int pharseClientMove(char* move, SockParams *param);
+int pharseClientReplay(SockParams *param);
+int pharseClientRefresh(SockParams *param);
+int pharseClientDisconnect(SockParams *param);
 
 int isFileExist(const char * filename);
 
