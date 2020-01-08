@@ -43,6 +43,7 @@ Last updated by Amnon Drory, Winter 2011.
 	void closeHandles(void)
 	{
 		CloseHandle(gameSessionMutex);
+		CloseHandle(waitForPlayerMutex);
 		CloseHandle(gameHandlerSemaphore);
 	}
 
@@ -59,6 +60,7 @@ Last updated by Amnon Drory, Winter 2011.
 		int ListenRes;
 
 		gameSessionMutex = CreateMutex(NULL, FALSE, NULL);
+		waitForPlayerMutex = CreateMutex(NULL, FALSE, NULL);
 		gameHandlerSemaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
 		
 		if (gameSessionMutex == NULL)
@@ -66,10 +68,16 @@ Last updated by Amnon Drory, Winter 2011.
 			goto server_defaul_clean;
 		}
 
+		if(waitForPlayerMutex == NULL)
+		{
+			CloseHandle(gameSessionMutex);
+			goto server_defaul_clean;
+		}
 
 		if (gameHandlerSemaphore == NULL)
 		{
 			CloseHandle(gameSessionMutex);
+			CloseHandle(waitForPlayerMutex);
 			goto server_defaul_clean;
 		}
 
@@ -255,6 +263,12 @@ Last updated by Amnon Drory, Winter 2011.
 	int waitOtherPlayerMove(void)
 	{
 		int time = WaitForSingleObject(gameHandlerSemaphore, WAIT_FOR_CLIENT_TIME);
+		return(time);
+	}
+
+	int waitOtherPlayerMoveINF(void)
+	{
+		int time = WaitForSingleObject(gameHandlerSemaphore, INFINITE);
 		return(time);
 	}
 

@@ -25,6 +25,7 @@ SockParams* secondPlayer = NULL;
 
 char firstPlayerName[MAX_NAME];
 char secondPlayerName[MAX_NAME];
+int isVsPlayer = FALSE_VAL;
 
 #pragma endregion
 
@@ -97,7 +98,6 @@ int sendServerInvite(char* messageID, char name[], SockParams * params)
 	mssg = strcat(mssg, name);
 
 	// send mssg.	
-	printf("%s\n", mssg);
 	TransferResult_t SendRes = SendString(mssg, (params->sd));
 	free(mssg);
 
@@ -241,6 +241,7 @@ int pharseClientMainMenue(SockParams * param)
 int pharseClientCPU(SockParams * param)
 {
 	int result = sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST, param);
+	isVsPlayer = FALSE_VAL;
 	return(NO_ERROR1);
 }
 
@@ -296,6 +297,7 @@ int pharseClientVS(SockParams* param)
 		{			
 			waitGameSessionMutex();
 			sendServerInvite(SERVER_INVITE, getName(secondPlayer->loc), firstPlayer);
+			sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST,firstPlayer);
 			releaseGameSessionMutex();
 		}
 		else
@@ -310,11 +312,10 @@ int pharseClientVS(SockParams* param)
 		releaseOtherPlayerMove();
 		waitGameSessionMutex();
 		sendServerInvite(SERVER_INVITE,getName(firstPlayer->loc), secondPlayer);
+		sendGeneralMesseage(SERVER_PLAYER_MOVE_REQUEST, secondPlayer);
+		isVsPlayer = TRUE_VAL;
 		releaseGameSessionMutex();
 	}
-	
-	remove(GAME_SESSION_LOC);
-	
 
 	return(NO_ERROR1);
 }
@@ -347,38 +348,137 @@ int pharseClientLeader(SockParams * param, int isUpdate)
 	return(NO_ERROR1);
 }
 
+
+
 int pharseClientMove(char* move, SockParams * param)
 {
-	// Get cpu move.
-	char* cpu = getRandMove();
-
-	// Check who won.
-	char* won = checkWin(move, cpu);
-	char* mssg = NULL;
-	int result = NO_ERROR1;
-
-	if (strcmp(won, PLAYER1_WIN) == 0)
+	if (isVsPlayer == TRUE_VAL)
 	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, getName(param->loc), param);
+		char OtherMove[LINE_SIZE] = "";
 
-		addToLeaderInstanse(getName(param->loc), 1, 0);
-		addToLeaderInstanse(SERVER_NAME, 0, 1);
-	}
-	else if (strcmp(won, PLAYER2_WIN) == 0)
-	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, SERVER_NAME, param);
+		if (param->loc == firstPlayer->loc)
+		{
+			waitGameSessionMutex();
+			FILE* sessionFile = fopen(GAME_SESSION_LOC, "r");
 
-		addToLeaderInstanse(SERVER_NAME, 1, 0);
-		addToLeaderInstanse(getName(param->loc), 0, 1);
+			if (sessionFile == NULL)
+			{
+				return(FILE_READ_ERROR);
+			}
+			else
+			{
+				// Read the first line to pharse. (name/win/lose/ratio)
+				fgets(OtherMove, LINE_SIZE, sessionFile);
+				fclose(sessionFile);
+			}
+
+			sessionFile = fopen(GAME_SESSION_LOC, "w");
+
+			if (sessionFile == NULL)
+			{
+				return(FILE_READ_ERROR);
+			}
+			else
+			{
+				fputs(move, sessionFile);
+				fclose(sessionFile);
+			}
+
+			releaseGameSessionMutex();
+			releaseOtherPlayerMove();
+		}
+		else if (param->loc == secondPlayer->loc)
+		{
+			waitGameSessionMutex();
+			
+			FILE* sessionFile = fopen(GAME_SESSION_LOC, "w");
+			
+			if (sessionFile == NULL)
+			{
+				return(FILE_READ_ERROR);
+			}
+			else
+			{
+				fputs(move, sessionFile);
+				fclose(sessionFile);
+			}
+
+			releaseGameSessionMutex();
+
+			waitOtherPlayerMoveINF();
+
+			sessionFile = fopen(GAME_SESSION_LOC, "r");
+
+			if (sessionFile == NULL)
+			{
+				return(FILE_READ_ERROR);
+			}
+			else
+			{
+				// Read the first line to pharse. (name/win/lose/ratio)
+				fgets(OtherMove, LINE_SIZE, sessionFile);
+				fclose(sessionFile);
+			}
+		}
+
+		char* won = checkWin(move, OtherMove);
+
+		int result = NO_ERROR1;
+
+		if (strcmp(won, PLAYER1_WIN) == 0)
+		{
+			result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, OtherMove, move, getName(param->loc), param);
+
+			addToLeaderInstanse(getName(param->loc), 1, 0);
+			addToLeaderInstanse(SERVER_NAME, 0, 1);
+		}
+		else if (strcmp(won, PLAYER2_WIN) == 0)
+		{
+			result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, OtherMove, move, SERVER_NAME, param);
+
+			addToLeaderInstanse(SERVER_NAME, 1, 0);
+			addToLeaderInstanse(getName(param->loc), 0, 1);
+		}
+		else
+		{
+			result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, OtherMove, move, DREW_IN_GAME, param);
+		}
+
+
+		result = sendGeneralMesseage(SERVER_GAME_OVER_MENU, param);
+
 	}
 	else
-	{
-		result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, DREW_IN_GAME, param);
+	{	
+		// Get cpu move.
+		char* cpu = getRandMove();
+
+		// Check who won.
+		char* won = checkWin(move, cpu);
+		int result = NO_ERROR1;
+
+		if (strcmp(won, PLAYER1_WIN) == 0)
+		{
+			result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, getName(param->loc), param);
+
+			addToLeaderInstanse(getName(param->loc), 1, 0);
+			addToLeaderInstanse(SERVER_NAME, 0, 1);
+		}
+		else if (strcmp(won, PLAYER2_WIN) == 0)
+		{
+			result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, SERVER_NAME, param);
+
+			addToLeaderInstanse(SERVER_NAME, 1, 0);
+			addToLeaderInstanse(getName(param->loc), 0, 1);
+		}
+		else
+		{
+			result = sendGameResultMessage(SERVER_GAME_RESULTS, SERVER_NAME, cpu, move, DREW_IN_GAME, param);
+		}
+
+
+		result = sendGeneralMesseage(SERVER_GAME_OVER_MENU, param);
 	}
-
-
-	result = sendGeneralMesseage(SERVER_GAME_OVER_MENU, param);
-
 	return(NO_ERROR1);
 }
 
