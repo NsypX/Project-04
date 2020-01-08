@@ -25,7 +25,8 @@ Last updated by Amnon Drory, Winter 2011.
 	SOCKET ThreadInputs[NUM_OF_WORKER_THREADS];
 	int countLogedIn = 0;
 	char IP_ADRESS[20];
-	HANDLE mutex;
+	HANDLE gameSessionMutex;
+	HANDLE waitForPlayerMutex;
 	HANDLE semaphore;
 
 #pragma endregion
@@ -39,7 +40,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 	void closeHandles(void)
 	{
-		CloseHandle(mutex);
+		CloseHandle(gameSessionMutex);
 		CloseHandle(semaphore);
 	}
 
@@ -54,17 +55,25 @@ Last updated by Amnon Drory, Winter 2011.
 		int bindRes;
 		int ListenRes;
 
-		mutex = CreateMutex(NULL, FALSE, NULL); 
+		gameSessionMutex = CreateMutex(NULL, FALSE, NULL);
+		waitForPlayerMutex = CreateMutex(NULL, FALSE, NULL);
 		semaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
 		
-		if (mutex == NULL) 
+		if (gameSessionMutex == NULL)
 		{
+			goto server_defaul_clean;
+		}
+
+		if (waitForPlayerMutex == NULL)
+		{
+			CloseHandle(gameSessionMutex);
 			goto server_defaul_clean;
 		}
 
 		if (semaphore == NULL)
 		{
-			CloseHandle(mutex);
+			CloseHandle(gameSessionMutex);
+			CloseHandle(waitForPlayerMutex);
 			goto server_defaul_clean;
 		}
 
@@ -236,14 +245,28 @@ Last updated by Amnon Drory, Winter 2011.
 		}
 	}
 
-	int waitMutex(void)
+	int waitGameSessionMutex(void)
 	{
-		int time = WaitForSingleObject(mutex, INFINITE);
+		int time = WaitForSingleObject(gameSessionMutex, INFINITE);
+		return(time);
 	}
 
-	int releaseMutex(void)
+	int releaseGameSessionMutex(void)
 	{
-		int time = ReleaseMutex(mutex);
+		int time = ReleaseMutex(gameSessionMutex);
+		return(time);
+	}
+
+	int waitOtherPlayerMove(void)
+	{
+		int time = WaitForSingleObject(gameSessionMutex, WAIT_FOR_CLIENT_TIME);
+		return(time);
+	}
+
+	int releaseOtherPlayerMove(void)
+	{
+		int time = ReleaseMutex(gameSessionMutex);
+		return(time);
 	}
 
 	int isLocationAvilableForClient()

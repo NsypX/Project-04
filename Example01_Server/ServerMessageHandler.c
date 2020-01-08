@@ -18,6 +18,14 @@
 #include "MessegeHead.h"
 #pragma endregion
 
+#pragma region Globals
+
+SockParams* firstPlayer = NULL;
+SockParams* secondPlayer = NULL;
+
+#pragma endregion
+
+
 #pragma region SendMessageFunctions
 int sendGeneralMesseage(char* messageID, SOCKET * sd)
 {
@@ -230,9 +238,39 @@ int pharseClientCPU(SockParams * param)
 	return(NO_ERROR1);
 }
 
+/*
+ * Check if a file exist using fopen() function
+ * return 1 if the file exist otherwise return 0
+ */
+int isFileExist(const char * filename) 
+{
+	/* try to open file to read */
+	FILE *file;
+
+	if (file = fopen(filename, "r"))
+	{
+		fclose(file);
+		return TRUE_VAL;
+	}
+
+	return FALSE_VAL;
+}
+
 int pharseClientVS(SockParams * param)
 {
-	printf("\nyou wanna fight here?!\n");
+	waitGameSessionMutex();
+
+	if (isFileExist(GAME_SESSION_LOC) == FALSE_VAL)
+	{
+
+	}
+	else
+	{
+
+	}
+	
+	releaseGameSessionMutex();
+
 	return(NO_ERROR1);
 }
 

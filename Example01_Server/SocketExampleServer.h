@@ -28,8 +28,8 @@ static void CleanupWorkerThreads();
 static DWORD ServiceThread(SockParams *soc);
 int isLocationAvilableForClient();
 void increaseCountLogged(void);
-int waitMutex(void);
-int releaseMutex(void);
+int waitGameSessionMutex(void);
+int releaseGameSessionMutex(void);
 
 
 
