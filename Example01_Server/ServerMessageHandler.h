@@ -49,7 +49,6 @@ typedef struct SockParams
 #define MAX_LINE_CVS 30
 #define ERROR_IN_CONNECTION -100
 #define SERVER_DENIE_CLIENT 124
-#define WAIT_FOR_CLIENT_TIME 15000
 #define FILE_ERROR -400
 
 int sendGeneralMesseage(char* messageID, SOCKET * sd);

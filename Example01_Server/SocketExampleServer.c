@@ -27,7 +27,7 @@ Last updated by Amnon Drory, Winter 2011.
 	char IP_ADRESS[20];
 	HANDLE gameSessionMutex;
 	HANDLE waitForPlayerMutex;
-	HANDLE semaphore;
+	HANDLE gameHandlerSemaphore;
 
 #pragma endregion
 
@@ -41,7 +41,7 @@ Last updated by Amnon Drory, Winter 2011.
 	void closeHandles(void)
 	{
 		CloseHandle(gameSessionMutex);
-		CloseHandle(semaphore);
+		CloseHandle(gameHandlerSemaphore);
 	}
 
 	void MainServer(char* ip)
@@ -57,7 +57,7 @@ Last updated by Amnon Drory, Winter 2011.
 
 		gameSessionMutex = CreateMutex(NULL, FALSE, NULL);
 		waitForPlayerMutex = CreateMutex(NULL, TRUE, NULL);
-		semaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
+		gameHandlerSemaphore = CreateSemaphore(NULL,0,CLIENT_AMOUNT,NULL);
 		
 		if (gameSessionMutex == NULL)
 		{
@@ -70,7 +70,7 @@ Last updated by Amnon Drory, Winter 2011.
 			goto server_defaul_clean;
 		}
 
-		if (semaphore == NULL)
+		if (gameHandlerSemaphore == NULL)
 		{
 			CloseHandle(gameSessionMutex);
 			CloseHandle(waitForPlayerMutex);
@@ -259,13 +259,14 @@ Last updated by Amnon Drory, Winter 2011.
 
 	int waitOtherPlayerMove(void)
 	{
-		int time = WaitForSingleObject(gameSessionMutex, WAIT_FOR_CLIENT_TIME);
+		int time = WaitForMultipleObjects(CLIENT_AMOUNT, gameHandlerSemaphore, TRUE, WAIT_FOR_CLIENT_TIME);
 		return(time);
 	}
 
 	int releaseOtherPlayerMove(void)
 	{
-		int time = ReleaseMutex(gameSessionMutex);
+		// Release one of the smaphores...
+		int time = ReleaseSemaphore(gameHandlerSemaphore, 1, NULL);
 		return(time);
 	}
 

@@ -256,6 +256,15 @@ int isFileExist(const char * filename)
 	return FALSE_VAL;
 }
 
+
+void debugThread(void)
+{
+	while (1)
+	{
+		system("cls");
+		printf("Waiting...");
+	}
+}
 int pharseClientVS(SockParams * param)
 {
 	waitGameSessionMutex();
@@ -263,6 +272,7 @@ int pharseClientVS(SockParams * param)
 	if (isFileExist(GAME_SESSION_LOC) == FALSE_VAL)
 	{
 		FILE * gameSession = fopen(GAME_SESSION_LOC, "w");
+		
 		if (gameSession == NULL)
 		{
 			releaseGameSessionMutex();
@@ -270,10 +280,12 @@ int pharseClientVS(SockParams * param)
 		}
 
 		fclose(gameSession);
+
 		releaseGameSessionMutex();
+
 		int waitTime = waitOtherPlayerMove();
 
-		if (waitTime < WAIT_FOR_CLIENT_TIME)
+		if (waitTime < 15000)
 		{
 			firstPlayer = param;
 			sendGeneralMesseage(SERVER_INVITE, firstPlayer->sd);
@@ -289,7 +301,7 @@ int pharseClientVS(SockParams * param)
 	}
 	
 	
-
+	remove(GAME_SESSION_LOC);
 	
 
 	return(NO_ERROR1);

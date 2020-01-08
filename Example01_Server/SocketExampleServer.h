@@ -20,6 +20,7 @@
 #include "SocketExampleServer.h"
 
 #define CLIENT_AMOUNT 2
+#define WAIT_FOR_CLIENT_TIME 15000
 
 
 void MainServer(char* ip);
@@ -30,6 +31,7 @@ int isLocationAvilableForClient();
 void increaseCountLogged(void);
 int waitGameSessionMutex(void);
 int releaseGameSessionMutex(void);
+
 int waitOtherPlayerMove(void);
 int releaseOtherPlayerMove(void);
 
